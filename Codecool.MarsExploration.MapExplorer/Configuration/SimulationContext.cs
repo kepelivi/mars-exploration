@@ -11,7 +11,7 @@ public class SimulationContext
     private MarsRover.MarsRover _rover;
     private Coordinate _landingCoordinate;
     private Map _map;
-    private IEnumerable<string> _resourcesToMonitor;
+    public readonly IEnumerable<string> ResourcesToMonitor;
     private ExplorationOutcome _outcome;
 
     public SimulationContext(int maxNumOfSteps, MarsRover.MarsRover rover, Coordinate landingCoordinate, Map map,
@@ -21,7 +21,7 @@ public class SimulationContext
         _rover = rover;
         _landingCoordinate = landingCoordinate;
         _map = map;
-        _resourcesToMonitor = resourcesToMonitor;
+        ResourcesToMonitor = resourcesToMonitor;
     }
 
     public void SetOutcome(ExplorationOutcome outcome)
