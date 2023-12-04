@@ -8,7 +8,7 @@ public class ConfigurationValidator : IConfigurationValidator
 {
     public bool Validate(Map map, Configuration config)
     {
-        List<bool> validationResults = new List<bool>()
+        var validationResults = new List<bool>()
         {
             IsLandingSpotValid(map, config.LandingCoordinate),
             IsMapFileValid(config.MapFile),
@@ -16,13 +16,22 @@ public class ConfigurationValidator : IConfigurationValidator
             IsTimeOutGreaterThenZero(config.MaxSteps)
         };
 
-        return validationResults.Contains(false);
+        return !validationResults.Contains(false);
     }
 
     public bool IsLandingSpotValid(Map map, Coordinate landingCoordinate)
     {
-        return map.Representation[landingCoordinate.X, landingCoordinate.Y] == null && 
-               new CoordinateCalculator().GetAdjacentCoordinates(landingCoordinate, map.Dimension).Contains(null);
+        var adjacentCoordinates = new CoordinateCalculator().GetAdjacentCoordinates(landingCoordinate, map.Dimension);
+        var isThereEmptySpaceAdjacentToLandingSpot = false;
+        foreach (var coordinate in adjacentCoordinates)
+        {
+            if (map.Representation[coordinate.X, coordinate.Y] == " ")
+            {
+                isThereEmptySpaceAdjacentToLandingSpot = true;
+            }
+        }
+        return map.Representation[landingCoordinate.X, landingCoordinate.Y] == " "  && isThereEmptySpaceAdjacentToLandingSpot;
+
     }
 
     // this file itself might not exist before calling MapLoader.Load() - this creates the file if it does not exist.
