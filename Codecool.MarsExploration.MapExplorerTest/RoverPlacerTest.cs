@@ -1,6 +1,7 @@
 ﻿using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
+using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorerTest;
 
@@ -21,5 +22,21 @@ public class RoverPlacerTest
             Assert.That(map.GetByCoordinate(testrover.Position), Is.EqualTo(" "));
         }
 
-    }
+        [Test]
+        public void PlaceRoverInvalidInput()
+        {
+            var map = _mapLoader.Load(_filePath);
+            try
+            {
+                var testrover = _roverPlacer.PlaceRover("rover-1", map, new Coordinate(16, 26), 2);
+
+            }
+            catch(Exception ex)
+            {
+                Assert.That(ex.Message, Is.EqualTo("Couldn't find free place around the ship."));
+
+            }
+        }
+
+}
 
