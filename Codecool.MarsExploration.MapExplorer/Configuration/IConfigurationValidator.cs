@@ -5,7 +5,7 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration;
 
 public interface IConfigurationValidator
 {
-    bool Validate(Configuration config);
+    bool Validate(Map map, Configuration config);
 
     bool IsLandingSpotValid(Map map, Coordinate landingCoordinate);
 

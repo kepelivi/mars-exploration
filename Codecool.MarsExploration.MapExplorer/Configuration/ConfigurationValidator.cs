@@ -6,11 +6,17 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration;
 
 public class ConfigurationValidator : IConfigurationValidator
 {
-    public bool Validate(Configuration config)
+    public bool Validate(Map map, Configuration config)
     {
-        return new List<bool>(
-            IsLandingSpotValid(), IsMapFileValid(config.MapFile), IsThereResources(config.Resources), IsTimeOutGreaterThenZero(config.MaxSteps))
-            .Contains(false) ? true : false;
+        List<bool> validationResults = new List<bool>()
+        {
+            IsLandingSpotValid(map, config.LandingCoordinate),
+            IsMapFileValid(config.MapFile),
+            IsThereResources(config.Resources),
+            IsTimeOutGreaterThenZero(config.MaxSteps)
+        };
+
+        return validationResults.Contains(false);
     }
 
     public bool IsLandingSpotValid(Map map, Coordinate landingCoordinate)
@@ -19,6 +25,7 @@ public class ConfigurationValidator : IConfigurationValidator
                new CoordinateCalculator().GetAdjacentCoordinates(landingCoordinate, map.Dimension).Contains(null);
     }
 
+    // this file itself might not exist before calling MapLoader.Load() - this creates the file if it does not exist.
     public bool IsMapFileValid(string filePath)
     {
         return File.Exists(filePath);
