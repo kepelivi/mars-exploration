@@ -11,10 +11,10 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
 {
     public class RoverPlacer
     {
-        public MarsRover PlaceRover(string Id, Map map, Coordinate shipPosition, int sight)
+        public MarsRover PlaceRover(string id, Map map, Coordinate shipPosition, int sight)
         {
             var roverCoordinate = AvailableCoordinate(map, shipPosition);
-            MarsRover rover = new MarsRover(Id, roverCoordinate, sight, new Dictionary<Coordinate, MapElement>());
+            MarsRover rover = new MarsRover(id, roverCoordinate, sight, new Dictionary<Coordinate, string>());
             return rover;
         }
 

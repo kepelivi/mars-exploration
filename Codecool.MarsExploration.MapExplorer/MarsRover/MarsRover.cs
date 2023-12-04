@@ -1,4 +1,5 @@
-﻿using Codecool.MarsExploration.MapGenerator.Calculators.Model;
+﻿using System.Xml.Schema;
+using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.MarsRover
@@ -7,9 +8,9 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
         public string Id { get; }
         public Coordinate Position { get; set; }
         public int Sight { get; }
-        public Dictionary<Coordinate, MapElement> ResourcesCollection { get; set; }
+        public Dictionary<Coordinate, string> ResourcesCollection { get; set; }
 
-        public MarsRover(string id, Coordinate position, int sight, Dictionary<Coordinate, MapElement> resourcesCollection)
+        public MarsRover(string id, Coordinate position, int sight, Dictionary<Coordinate, string> resourcesCollection)
         {
             Id = id;
             Position = position;
