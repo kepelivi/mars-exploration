@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="MarsRover" />
+      <Folder Include="Configuration" />
     </ItemGroup>
 
 </Project>
