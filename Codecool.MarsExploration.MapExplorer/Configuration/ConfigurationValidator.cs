@@ -19,7 +19,7 @@ public class ConfigurationValidator : IConfigurationValidator
         return !validationResults.Contains(false);
     }
 
-    private bool IsLandingSpotValid(Map map, Coordinate landingCoordinate)
+    private static bool IsLandingSpotValid(Map map, Coordinate landingCoordinate)
     {
         var adjacentCoordinates = new CoordinateCalculator().GetAdjacentCoordinates(landingCoordinate, map.Dimension);
         var isThereEmptySpaceAdjacentToLandingSpot = false;
@@ -35,17 +35,17 @@ public class ConfigurationValidator : IConfigurationValidator
     }
 
     // this file itself might not exist before calling MapLoader.Load() - this creates the file if it does not exist.
-    private bool IsMapFileValid(string filePath)
+    private static bool IsMapFileValid(string filePath)
     {
         return File.Exists(filePath);
     }
 
-    private bool IsThereResources(IEnumerable<string> resources)
+    private static bool IsThereResources(IEnumerable<string> resources)
     {
         return resources.Any();
     }
 
-    private bool IsTimeOutGreaterThenZero(int timeout)
+    private static bool IsTimeOutGreaterThenZero(int timeout)
     {
         return timeout > 0;
     }

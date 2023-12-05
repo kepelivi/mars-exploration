@@ -4,7 +4,7 @@ using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.MarsRover
 {
-    public class RoverPlacer
+    public class RoverPlacer : IRoverPlacer
     {
 
         public MarsRover PlaceRover(string id, Map map, Coordinate shipPosition, int sight)
