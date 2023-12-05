@@ -14,8 +14,8 @@ class Program
         string mapFile = $@"{WorkDir}/Resources/exploration-0.map";
         Coordinate landingSpot = new Coordinate(2, 2);
         var map = new MapLoader.MapLoader().Load(mapFile);
-        var resources = new List<string> { "&" };
-        int timeOut = 10;
+        var resources = new List<string> { "*", "%" };
+        int timeOut = 1000;
         string roverId = "Rover1";
         int roverSight = 3;
 
@@ -31,6 +31,5 @@ class Program
         };
         
         simulation.RunSimulation(steps);
-
     }
 }
