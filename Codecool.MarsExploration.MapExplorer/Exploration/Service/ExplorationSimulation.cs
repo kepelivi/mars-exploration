@@ -63,6 +63,7 @@ public class ExplorationSimulation
 
         var newPosition = emptyCoordinates[_random.Next(0, emptyCoordinates.Count)];
         _rover.Position = new Coordinate(newPosition.X, newPosition.Y);
+        _context.NumberOfSteps++;
     }
 
     private void MoveBack()
