@@ -93,7 +93,7 @@ public class ExplorationSimulation
             if(item.Value.Item2 == _rover.PastMovements[_rover.PastMovements.Count - 1]) resourcesFoundInLastStepCoordinates.Add(item.Key);
         }
 
-        var coordinateNearResource = new Coordinate (_map.Dimension, _map.Dimension);
+        var coordinateNearResource = new Coordinate (_map.Dimension + 1, _map.Dimension + 1);
 
         foreach (var coordinate in emptyNotUsedCoordinates)
         {
@@ -106,13 +106,13 @@ public class ExplorationSimulation
             }
         }
 
-        if(coordinateNearResource != new Coordinate(_map.Dimension, _map.Dimension))
+        if(coordinateNearResource != new Coordinate(_map.Dimension + 1, _map.Dimension + 1))
         {
             _rover.Position = coordinateNearResource;
         }
         else
         {
-            _rover.Position = emptyNotUsedCoordinates[_random.Next(emptyNotUsedCoordinates.Count)];
+            _rover.Position = emptyNotUsedCoordinates[_random.Next(0, emptyNotUsedCoordinates.Count-1)];
         }
 
         _context.NumberOfSteps++;

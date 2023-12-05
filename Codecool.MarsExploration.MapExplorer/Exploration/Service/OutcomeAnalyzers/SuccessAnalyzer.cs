@@ -20,11 +20,11 @@ public class SuccessAnalyzer : IOutcomeAnalyzer
 
         foreach (var resource in rover.ResourcesCollection)
         {
-            if (resource.Value == "*")
+            if (resource.Value.Item1 == "*")
             {
                 foreach (var resource2 in rover.ResourcesCollection)
                 {
-                    if (resource2.Value == "%")
+                    if (resource2.Value.Item1 == "%")
                     {
                         if (CalculateCoordinateDistance(resource.Key, resource2.Key) <= 5) return true;
                     }
@@ -42,8 +42,8 @@ public class SuccessAnalyzer : IOutcomeAnalyzer
 
         foreach (var resource in rover.ResourcesCollection)
         {
-            if (resource.Value == "*") waterCount++;
-            if (resource.Value == "%") mineralCount++;
+            if (resource.Value.Item1 == "*") waterCount++;
+            if (resource.Value.Item1 == "%") mineralCount++;
         }
 
         return (mineralCount >= 4 && waterCount >= 3);
