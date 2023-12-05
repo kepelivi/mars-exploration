@@ -87,33 +87,40 @@ public class ExplorationSimulation
             .ToList();
 
         var resourcesFoundInLastStepCoordinates = new List<Coordinate>();
+        var coordinateNearResource = new Coordinate(_map.Dimension + 1, _map.Dimension + 1);
 
         foreach (KeyValuePair<Coordinate, (string, Coordinate)> item in _rover.ResourcesCollection)
         {
             if(item.Value.Item2 == _rover.PastMovements[_rover.PastMovements.Count - 1]) resourcesFoundInLastStepCoordinates.Add(item.Key);
         }
 
-        var coordinateNearResource = new Coordinate (_map.Dimension + 1, _map.Dimension + 1);
-
-        foreach (var coordinate in emptyNotUsedCoordinates)
+        if (resourcesFoundInLastStepCoordinates.Count != 0 && emptyNotUsedCoordinates.Count != 0)
         {
-            foreach (var item in resourcesFoundInLastStepCoordinates)
+
+            foreach (var coordinate in emptyNotUsedCoordinates)
             {
-                if (Math.Abs(item.X - coordinate.X) + Math.Abs(item.Y - coordinate.Y) < Math.Abs(coordinateNearResource.X - coordinate.X) + Math.Abs(coordinateNearResource.Y - coordinate.Y))
+                foreach (var item in resourcesFoundInLastStepCoordinates)
                 {
-                    coordinateNearResource = coordinate;
+                    if (Math.Abs(item.X - coordinate.X) + Math.Abs(item.Y - coordinate.Y) < Math.Abs(coordinateNearResource.X - coordinate.X) + Math.Abs(coordinateNearResource.Y - coordinate.Y))
+                    {
+                        coordinateNearResource = coordinate;
+                    }
                 }
             }
-        }
-
-        if(coordinateNearResource != new Coordinate(_map.Dimension + 1, _map.Dimension + 1))
-        {
-            _rover.Position = coordinateNearResource;
+            if (coordinateNearResource != new Coordinate(_map.Dimension + 1, _map.Dimension + 1))
+            {
+                _rover.Position = coordinateNearResource;
+            }
+            else
+            {
+                _rover.Position = emptyNotUsedCoordinates[_random.Next(0, emptyNotUsedCoordinates.Count())];
+            }
         }
         else
         {
-            _rover.Position = emptyNotUsedCoordinates[_random.Next(0, emptyNotUsedCoordinates.Count-1)];
+            _rover.Position = emptyCoordinates[_random.Next(0, emptyCoordinates.Count())];
         }
+        
 
         _context.NumberOfSteps++;
 
@@ -131,7 +138,7 @@ public class ExplorationSimulation
         {
             for (int j = -_rover.Sight; j <= _rover.Sight; j++)
             {
-                Coordinate coordToCheck = new Coordinate(Math.Max(_rover.Position.X + i, 0), Math.Max(_rover.Position.Y + j, 0));
+                Coordinate coordToCheck = new Coordinate(Math.Min(Math.Max(_rover.Position.X + i, 0), _map.Dimension-1), Math.Min(Math.Max(_rover.Position.Y + j, 0), _map.Dimension-1));
                 // Console.WriteLine($"[{coordToCheck.X},{coordToCheck.Y}]: {_map.GetByCoordinate(coordToCheck)}");
                 if (_context.ResourcesToMonitor.Contains(_map.GetByCoordinate(coordToCheck)))
                 {
