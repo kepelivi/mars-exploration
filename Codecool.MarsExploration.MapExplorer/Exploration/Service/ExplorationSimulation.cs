@@ -68,6 +68,50 @@ public class ExplorationSimulation
         _context.NumberOfSteps++;
     }
 
+    public void MoveSmart()
+    {
+        //todo: add IsEmpty to Move
+        var coordinateCalculator = new CoordinateCalculator();
+        var emptyCoordinates = coordinateCalculator
+            .GetAdjacentCoordinates(_rover.Position, _map.Dimension)
+            .Where(coordinate => _map.IsEmpty(coordinate))
+            .ToList();
+
+        var emptyNotUsedCoordinates = emptyCoordinates
+            .Where(coordinate => !_rover.PastMovements.Contains(coordinate))
+            .ToList();
+
+        var resourcesFoundInLastStepCoordinates = new List<Coordinate>();
+
+        foreach (KeyValuePair<Coordinate, (string, Coordinate)> item in _rover.ResourcesCollection)
+        {
+            if(item.Value.Item2 == _rover.PastMovements[_rover.PastMovements.Count - 1]) resourcesFoundInLastStepCoordinates.Add(item.Key);
+        }
+
+        var coordinateNearResource = new Coordinate (_map.Dimension, _map.Dimension);
+
+        foreach (var coordinate in emptyNotUsedCoordinates)
+        {
+            foreach (var item in resourcesFoundInLastStepCoordinates)
+            {
+                if (Math.Abs(item.X - coordinate.X) + Math.Abs(item.Y - coordinate.Y) < Math.Abs(coordinateNearResource.X - coordinate.X) + Math.Abs(coordinateNearResource.Y - coordinate.Y))
+                {
+                    coordinateNearResource = coordinate;
+                }
+            }
+        }
+
+        if(coordinateNearResource != new Coordinate(_map.Dimension, _map.Dimension))
+        {
+            _rover.Position = coordinateNearResource;
+        }
+        else
+        {
+            _rover.Position = emptyNotUsedCoordinates[_random.Next(emptyNotUsedCoordinates.Count)];
+        }
+
+    }
+
     private void MoveBack()
     {
         _rover.Position = _landingCoordinate;
@@ -86,7 +130,7 @@ public class ExplorationSimulation
                 {
                     if (!_rover.ResourcesCollection.Keys.Contains(coordToCheck))
                     {
-                        _rover.ResourcesCollection.Add(coordToCheck, _map.GetByCoordinate(coordToCheck));
+                        _rover.ResourcesCollection.Add(coordToCheck, (_map.GetByCoordinate(coordToCheck), _rover.Position));
                     }
                 }
             }
