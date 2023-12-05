@@ -6,26 +6,27 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration;
 
 public class SimulationContext
 {
-    private int _numberOfSteps;
-    private int _maxNumOfSteps;
-    private MarsRover.MarsRover _rover;
+    public int NumberOfSteps;
+    public int MaxNumOfSteps;
+    public MarsRover.MarsRover Rover;
     private Coordinate _landingCoordinate;
     private Map _map;
     public readonly IEnumerable<string> ResourcesToMonitor;
-    private ExplorationOutcome _outcome;
+    public ExplorationOutcome? Outcome;
 
     public SimulationContext(int maxNumOfSteps, MarsRover.MarsRover rover, Coordinate landingCoordinate, Map map,
         IEnumerable<string> resourcesToMonitor)
     {
-        _maxNumOfSteps = maxNumOfSteps;
-        _rover = rover;
+        MaxNumOfSteps = maxNumOfSteps;
+        Rover = rover;
         _landingCoordinate = landingCoordinate;
         _map = map;
         ResourcesToMonitor = resourcesToMonitor;
+        Outcome = null;
     }
 
     public void SetOutcome(ExplorationOutcome outcome)
     {
-        _outcome = outcome;
+        Outcome = outcome;
     }
 }

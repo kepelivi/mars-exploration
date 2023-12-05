@@ -37,12 +37,24 @@ public class ExplorationSimulation
         _context = new SimulationContext(config.MaxSteps, _rover, _landingCoordinate, _map, config.Resources);
     }
     
-    public void RunSimulation()
+    public void RunSimulation(List<Action> simulationSteps)
     {
-        
+        for (int i = 1; i <= _context.NumberOfSteps; i++)
+        {
+            foreach (var action in simulationSteps)
+            {
+                action();
+            }
+
+            if (_context.Outcome != null)
+            {
+                Console.WriteLine($"Simulation ended with an outcome of {_context.Outcome.ToString()}");
+                return;
+            }
+        }
     }
 
-    private void Move()
+    public void Move()
     {
         var coordinateCalculator = new CoordinateCalculator();
         var emptyCoordinates = coordinateCalculator.GetAdjacentCoordinates(_rover.Position, _map.Dimension).ToList();
@@ -56,7 +68,7 @@ public class ExplorationSimulation
         _rover.Position = _landingCoordinate;
     }
 
-    private void Scan()
+    public void Scan()
     {
         for (int i = -_rover.Sight; i <= _rover.Sight; i++)
         {
@@ -71,12 +83,16 @@ public class ExplorationSimulation
         }
     }
 
-    private void Analyse()
+    public void Analyse()
     {
-        
+        IOutcomeAnalyzer successAnalyzer = new SuccessAnalyzer();
+        IOutcomeAnalyzer timeoutAnalyzer = new TimeoutAnalyzer();
+
+        if (successAnalyzer.Analyze(_context)) _context.Outcome = ExplorationOutcome.Colonizable;
+        if (timeoutAnalyzer.Analyze(_context)) _context.Outcome = ExplorationOutcome.Timeout;
     }
 
-    private void Log()
+    public void Log()
     {
         
     }
