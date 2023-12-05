@@ -49,7 +49,7 @@ public class ExplorationSimulation
     {
         for (int i = -_rover.Sight; i <= _rover.Sight; i++)
         {
-            for (int j = _rover.Sight; j <= _rover.Sight; j++)
+            for (int j = -_rover.Sight; j <= _rover.Sight; j++)
             {
                 Coordinate coordToCheck = new Coordinate(_rover.Position.X + i, _rover.Position.Y + j);
                 if (_context.ResourcesToMonitor.Contains(coordToCheck.ToString()))
