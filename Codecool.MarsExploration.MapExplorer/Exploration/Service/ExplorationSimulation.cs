@@ -41,7 +41,7 @@ public class ExplorationSimulation
     
     public void RunSimulation(List<Action> simulationSteps)
     {
-        for (int i = 1; i <= _context.NumberOfSteps; i++)
+        for (int i = 1; i <= _context.MaxNumOfSteps; i++)
         {
             foreach (var action in simulationSteps)
             {
@@ -73,14 +73,19 @@ public class ExplorationSimulation
 
     public void Scan()
     {
+        // TODO: Need to check if coordinate even exists
         for (int i = -_rover.Sight; i <= _rover.Sight; i++)
         {
             for (int j = -_rover.Sight; j <= _rover.Sight; j++)
             {
-                Coordinate coordToCheck = new Coordinate(_rover.Position.X + i, _rover.Position.Y + j);
-                if (_context.ResourcesToMonitor.Contains(coordToCheck.ToString()))
+                Coordinate coordToCheck = new Coordinate(Math.Max(_rover.Position.X + i, 0), Math.Max(_rover.Position.Y + j, 0));
+                // Console.WriteLine($"[{coordToCheck.X},{coordToCheck.Y}]: {_map.GetByCoordinate(coordToCheck)}");
+                if (_context.ResourcesToMonitor.Contains(_map.GetByCoordinate(coordToCheck)))
                 {
-                    _rover.ResourcesCollection.Add(coordToCheck, coordToCheck.ToString());
+                    if (!_rover.ResourcesCollection.Keys.Contains(coordToCheck))
+                    {
+                        _rover.ResourcesCollection.Add(coordToCheck, _map.GetByCoordinate(coordToCheck));
+                    }
                 }
             }
         }
@@ -99,7 +104,7 @@ public class ExplorationSimulation
     {
         if (_context.Outcome == null)
         {
-            _logger.Log($"Rover {_rover.Id} is at coordinates {_rover.Position.X},{_rover.Position.Y}. It has completed {_context.NumberOfSteps} out of {_context.MaxNumOfSteps}.");
+            _logger.Log($"Rover {_rover.Id} is at coordinates {_rover.Position.X},{_rover.Position.Y}. It has completed {_context.NumberOfSteps} out of {_context.MaxNumOfSteps}. The collection includes {_rover.ResourcesCollection.Count} resources");
         }
         else
         {
