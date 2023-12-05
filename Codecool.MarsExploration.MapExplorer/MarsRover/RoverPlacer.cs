@@ -1,35 +1,25 @@
 ﻿using Codecool.MarsExploration.MapGenerator.Calculators.Model;
-using Codecool.MarsExploration.MapGenerator.Configuration.Service;
+using Codecool.MarsExploration.MapGenerator.Calculators.Service;
 using Codecool.MarsExploration.MapGenerator.MapElements.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Codecool.MarsExploration.MapExplorer.MarsRover
 {
     public class RoverPlacer
     {
+
         public MarsRover PlaceRover(string id, Map map, Coordinate shipPosition, int sight)
         {
             var roverCoordinate = AvailableCoordinate(map, shipPosition);
-            MarsRover rover = new MarsRover(id, roverCoordinate, sight, new Dictionary<Coordinate, string>());
+            var rover = new MarsRover(id, roverCoordinate, sight, new Dictionary<Coordinate, string>());
             return rover;
         }
 
         private Coordinate AvailableCoordinate(Map map, Coordinate shipCoords)
         {
-            Coordinate[] coords = {
-                new Coordinate(shipCoords.X + 1, shipCoords.Y + 1),
-                new Coordinate(shipCoords.X + 1, shipCoords.Y),
-                new Coordinate(shipCoords.X + 1, shipCoords.Y -1),
-                new Coordinate(shipCoords.X, shipCoords.Y + 1),
-                new Coordinate(shipCoords.X, shipCoords.Y -1),
-                new Coordinate(shipCoords.X - 1, shipCoords.Y),
-                new Coordinate(shipCoords.X - 1, shipCoords.Y + 1),
-                new Coordinate(shipCoords.X -1, shipCoords.Y - 1)
-            };
+            var coordinateCalculator = new CoordinateCalculator();
+
+            var coords = coordinateCalculator.GetAdjacentCoordinates(shipCoords, map.Dimension);
+
             foreach (var coord in coords)
             {
                 if (map.IsEmpty(coord)) return coord;
