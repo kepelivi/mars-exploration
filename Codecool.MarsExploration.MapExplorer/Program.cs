@@ -24,7 +24,7 @@ class Program
         var simulation = new ExplorationSimulation(config, logger, roverId, roverSight);
         List<Action> steps = new List<Action>()
         {
-            simulation.Move,
+            simulation.SmartMove,
             simulation.Scan,
             simulation.Analyse,
             simulation.Log
