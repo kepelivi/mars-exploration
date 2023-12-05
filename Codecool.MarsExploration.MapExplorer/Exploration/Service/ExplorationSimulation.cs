@@ -3,12 +3,14 @@ using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
+using Codecool.MarsExploration.MapGenerator.Calculators.Service;
 using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Exploration.Service;
 
 public class ExplorationSimulation
 {
+    private readonly Random _random = new ();
     private SimulationContext _context;
     private Coordinate _landingCoordinate;
     private Map _map;
@@ -42,7 +44,11 @@ public class ExplorationSimulation
 
     private void Move()
     {
-        
+        var coordinateCalculator = new CoordinateCalculator();
+        var emptyCoordinates = coordinateCalculator.GetAdjacentCoordinates(_rover.Position, _map.Dimension).ToList();
+
+        var newPosition = emptyCoordinates[_random.Next(0, emptyCoordinates.Count)];
+        _rover.Position = new Coordinate(newPosition.X, newPosition.Y);
     }
 
     private void Scan()
