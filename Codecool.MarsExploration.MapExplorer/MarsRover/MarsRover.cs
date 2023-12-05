@@ -10,12 +10,15 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
         public int Sight { get; }
         public Dictionary<Coordinate, string> ResourcesCollection { get; set; }
 
-        public MarsRover(string id, Coordinate position, int sight, Dictionary<Coordinate, string> resourcesCollection)
+        public List<Coordinate> PastMovements { get; set; }
+
+        public MarsRover(string id, Coordinate position, int sight)
         {
             Id = id;
             Position = position;
             Sight = sight;
-            ResourcesCollection = resourcesCollection;
+            ResourcesCollection = new Dictionary<Coordinate, string> ();
+            PastMovements = new List<Coordinate>();
         }
     }
 }
