@@ -62,6 +62,8 @@ public class ExplorationSimulation
         var emptyCoordinates = coordinateCalculator.GetAdjacentCoordinates(_rover.Position, _map.Dimension).ToList();
 
         var newPosition = emptyCoordinates[_random.Next(0, emptyCoordinates.Count)];
+
+        _rover.PastMovements.Add(_rover.Position);
         _rover.Position = new Coordinate(newPosition.X, newPosition.Y);
         _context.NumberOfSteps++;
     }
