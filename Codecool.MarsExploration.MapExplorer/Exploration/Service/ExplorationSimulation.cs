@@ -15,11 +15,13 @@ public class ExplorationSimulation
     private Coordinate _landingCoordinate;
     private Map _map;
     private MarsRover.MarsRover _rover;
+    private ILogger _logger;
 
     public ExplorationSimulation(Configuration.Configuration config, ILogger logger, string roverId, int roverSight)
     {
         IConfigurationValidator configurationValidator = new ConfigurationValidator();
         IMapLoader mapLoader = new MapLoader.MapLoader();
+        _logger = logger;
         _map = mapLoader.Load(config.MapFile);
 
         if (configurationValidator.Validate(_map, config))
@@ -28,7 +30,7 @@ public class ExplorationSimulation
         }
         else
         {
-            logger.Log("ERROR: invalid configuration!");
+            _logger.Log("ERROR: invalid configuration!");
             throw new Exception("Invalid configuration!");
         }
         
@@ -94,6 +96,13 @@ public class ExplorationSimulation
 
     public void Log()
     {
-        
+        if (_context.Outcome == null)
+        {
+            _logger.Log($"Rover {_rover.Id} is at coordinates {_rover.Position.X},{_rover.Position.Y}. It has completed {_context.NumberOfSteps} out of {_context.MaxNumOfSteps}.");
+        }
+        else
+        {
+            _logger.Log($"Outcome {_context.Outcome.ToString()} reached!");
+        }
     }
 }
