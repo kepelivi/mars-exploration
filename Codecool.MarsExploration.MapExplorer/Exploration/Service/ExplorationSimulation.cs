@@ -51,6 +51,11 @@ public class ExplorationSimulation
         _rover.Position = new Coordinate(newPosition.X, newPosition.Y);
     }
 
+    private void MoveBack()
+    {
+        _rover.Position = _landingCoordinate;
+    }
+
     private void Scan()
     {
         for (int i = -_rover.Sight; i <= _rover.Sight; i++)
