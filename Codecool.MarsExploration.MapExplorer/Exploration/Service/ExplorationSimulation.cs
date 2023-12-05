@@ -59,7 +59,10 @@ public class ExplorationSimulation
     public void Move()
     {
         var coordinateCalculator = new CoordinateCalculator();
-        var emptyCoordinates = coordinateCalculator.GetAdjacentCoordinates(_rover.Position, _map.Dimension).ToList();
+        var emptyCoordinates = coordinateCalculator
+            .GetAdjacentCoordinates(_rover.Position, _map.Dimension)
+            .Where(coordinate => _map.IsEmpty(coordinate))
+            .ToList();
 
         var newPosition = emptyCoordinates[_random.Next(0, emptyCoordinates.Count)];
 
@@ -71,6 +74,8 @@ public class ExplorationSimulation
     public void MoveSmart()
     {
         //todo: add IsEmpty to Move
+        _rover.PastMovements.Add(_rover.Position);
+
         var coordinateCalculator = new CoordinateCalculator();
         var emptyCoordinates = coordinateCalculator
             .GetAdjacentCoordinates(_rover.Position, _map.Dimension)
@@ -109,6 +114,8 @@ public class ExplorationSimulation
         {
             _rover.Position = emptyNotUsedCoordinates[_random.Next(emptyNotUsedCoordinates.Count)];
         }
+
+        _context.NumberOfSteps++;
 
     }
 
