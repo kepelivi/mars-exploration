@@ -17,7 +17,7 @@ public class ConfigurationValidatorTest
         var testLandingCoordinate = new Coordinate(2,2);
         var testResources = new List<string>{"&", "#"};
         const int testTimeOut = 10;
-        var testConfig = new Configuration($"{WorkDir}\\TestResources\\test-map.map", testLandingCoordinate, testResources, testTimeOut);
+        var testConfig = new Configuration($"{WorkDir}" + "/TestResources/test-map.map", testLandingCoordinate, testResources, testTimeOut);
 
         Assert.That(_configurationValidator.Validate(testMap, testConfig), Is.False);
 
@@ -30,7 +30,7 @@ public class ConfigurationValidatorTest
         var testLandingCoordinate = new Coordinate(1,1);
         var testResources = new List<string>{"&", "#"};
         const int testTimeOut = 10;
-        var testConfig = new Configuration($"{WorkDir}\\Resources\\test-map.map", testLandingCoordinate, testResources, testTimeOut);
+        var testConfig = new Configuration($"{WorkDir}" + "/TestResources/nonexistent-map.map", testLandingCoordinate, testResources, testTimeOut);
         
         Assert.That(_configurationValidator.Validate(testMap, testConfig),Is.False);
     }
@@ -42,7 +42,7 @@ public class ConfigurationValidatorTest
         var testLandingCoordinate = new Coordinate(1,1);
         const int testTimeOut = 10;
         var testResources = new List<string>();
-        var testConfig = new Configuration($"{WorkDir}\\TestResources\\test-map.map", testLandingCoordinate, testResources, testTimeOut);
+        var testConfig = new Configuration($"{WorkDir}" + "/TestResources/test-map.map", testLandingCoordinate, testResources, testTimeOut);
         
         Assert.That(_configurationValidator.Validate(testMap, testConfig), Is.False);
     }
@@ -54,7 +54,7 @@ public class ConfigurationValidatorTest
         var testLandingCoordinate = new Coordinate(1,1);
         var testResources = new List<string>{"&", "#"};
         const int testTimeOut = 0;
-        var testConfig = new Configuration($"{WorkDir}\\TestResources\\test-map.map", testLandingCoordinate, testResources, testTimeOut);
+        var testConfig = new Configuration($"{WorkDir}" + "/TestResources/test-map.map", testLandingCoordinate, testResources, testTimeOut);
         
         Assert.That(_configurationValidator.Validate(testMap, testConfig), Is.False);
     }
@@ -66,7 +66,7 @@ public class ConfigurationValidatorTest
         var testLandingCoordinate = new Coordinate(1,1);
         var testResources = new List<string>{"&", "#"};
         const int testTimeOut = 10;
-        var testConfig = new Configuration($"{WorkDir}\\TestResources\\test-map.map", testLandingCoordinate, testResources, testTimeOut);
+        var testConfig = new Configuration($"{WorkDir}" + "/TestResources/test-map.map", testLandingCoordinate, testResources, testTimeOut);
         
         Assert.That(_configurationValidator.Validate(testMap, testConfig), Is.True);
     }
