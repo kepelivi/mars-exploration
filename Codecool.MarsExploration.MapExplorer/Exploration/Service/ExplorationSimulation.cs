@@ -73,16 +73,21 @@ public class ExplorationSimulation
     public void SmartMove()
     {
         var coordinateCalculator = new CoordinateCalculator();
-        var emptyCoordinates = coordinateCalculator.GetAdjacentCoordinates(_context.Rover.Position, _context.Map.Dimension).Where(c => _context.Map.IsEmpty(c)).ToList();
+        var emptyCoordinates = coordinateCalculator.GetAdjacentCoordinates(_context.Rover.Position, _context.Map.Dimension)
+            .Where(c => _context.Map.IsEmpty(c)).ToList();
 
         var availableCoordinates = emptyCoordinates.Where(c => !_context.Rover.PastMovements.Contains(c)).ToList();
 
         _context.Rover.PastMovements.Add(_context.Rover.Position);
+
         var resourceFoundInLastStep = _context.Rover.Position;
         var coord = _context.Rover.Position;
+
         if (_context.Rover.ResourcesCollection.Count != 0)
         {
-            resourceFoundInLastStep = _context.Rover.ResourcesCollection.FirstOrDefault(resource => resource.Value.Item2.X == _context.Rover.PastMovements[^1].X && resource.Value.Item2.Y == _context.Rover.PastMovements[^1].Y).Key;
+            resourceFoundInLastStep = _context.Rover.ResourcesCollection
+                .FirstOrDefault(resource => resource.Value.roverPosition.X == _context.Rover.PastMovements[^1].X &&
+                resource.Value.roverPosition.Y == _context.Rover.PastMovements[^1].Y).Key;
 
             if (resourceFoundInLastStep != null)
             {
