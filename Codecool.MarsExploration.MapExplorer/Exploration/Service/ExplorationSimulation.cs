@@ -59,7 +59,10 @@ public class ExplorationSimulation
     public void Move()
     {
         var coordinateCalculator = new CoordinateCalculator();
-        var emptyCoordinates = coordinateCalculator.GetAdjacentCoordinates(_rover.Position, _map.Dimension).ToList();
+        var emptyCoordinates = coordinateCalculator
+            .GetAdjacentCoordinates(_rover.Position, _map.Dimension)
+            .Where(coordinate => _map.IsEmpty(coordinate))
+            .ToList();
 
         var newPosition = emptyCoordinates[_random.Next(0, emptyCoordinates.Count)];
 
@@ -81,7 +84,7 @@ public class ExplorationSimulation
         if (_rover.ResourcesCollection.Count != 0)
         {
             resourceFoundInLastStep = _rover.ResourcesCollection.Where(resource =>
-            resource.Value.Item2 == _rover.PastMovements[_rover.PastMovements.Count - 1]).FirstOrDefault().Key;
+            resource.Value.Item2.X == _rover.PastMovements[_rover.PastMovements.Count - 1].X && resource.Value.Item2.Y == _rover.PastMovements[_rover.PastMovements.Count - 1].Y).FirstOrDefault().Key;
 
             if (resourceFoundInLastStep != null)
             {
@@ -92,7 +95,7 @@ public class ExplorationSimulation
             }
         }
         
-        if (availableCoordinates == null)
+        if (availableCoordinates.Count == 0)
         {
             _rover.Position = emptyCoordinates[_random.Next(0, emptyCoordinates.Count)];
         }
@@ -114,13 +117,11 @@ public class ExplorationSimulation
 
     public void Scan()
     {
-        // TODO: Need to check if coordinate even exists
         for (int i = -_rover.Sight; i <= _rover.Sight; i++)
         {
             for (int j = -_rover.Sight; j <= _rover.Sight; j++)
             {
-                Coordinate coordToCheck = new Coordinate(Math.Max(_rover.Position.X + i, 0), Math.Max(_rover.Position.Y + j, 0));
-                // Console.WriteLine($"[{coordToCheck.X},{coordToCheck.Y}]: {_map.GetByCoordinate(coordToCheck)}");
+                Coordinate coordToCheck = new Coordinate(Math.Min(Math.Max(_rover.Position.X + i, 0), _map.Dimension-1), Math.Min(Math.Max(_rover.Position.Y + j, 0), _map.Dimension-1));
                 if (_context.ResourcesToMonitor.Contains(_map.GetByCoordinate(coordToCheck)))
                 {
                     if (!_rover.ResourcesCollection.Keys.Contains(coordToCheck))

@@ -12,19 +12,19 @@ class Program
     public static void Main(string[] args)
     {
         string mapFile = $@"{WorkDir}/Resources/exploration-0.map";
-        Coordinate landingSpot = new Coordinate(2, 2);
+        Coordinate landingSpot = new Coordinate(15, 15);
         var map = new MapLoader.MapLoader().Load(mapFile);
         var resources = new List<string> { "*", "%" };
         int timeOut = 1000;
         string roverId = "Rover1";
-        int roverSight = 3;
+        int roverSight = 2;
 
         var config = new Configuration.Configuration(mapFile, landingSpot, resources, timeOut);
         ILogger logger = new ConsoleLogger();
         var simulation = new ExplorationSimulation(config, logger, roverId, roverSight);
         List<Action> steps = new List<Action>()
         {
-            simulation.SmartMove,
+            simulation.MoveSmart,
             simulation.Scan,
             simulation.Analyse,
             simulation.Log
