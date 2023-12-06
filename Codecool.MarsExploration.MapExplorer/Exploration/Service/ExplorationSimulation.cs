@@ -2,6 +2,7 @@ using Codecool.MarsExploration.MapExplorer.Configuration;
 using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover;
+using Codecool.MarsExploration.MapExplorer.Repository;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
 
@@ -12,6 +13,7 @@ public class ExplorationSimulation
     private readonly Random _random = new ();
     private readonly SimulationContext _context;
     private readonly ILogger _logger;
+    private readonly ISimulationRepository _repository = new SimulationRepository();
 
     public ExplorationSimulation(Configuration.Configuration config, ILogger logger, string roverId, int roverSight)
     {
@@ -47,6 +49,7 @@ public class ExplorationSimulation
             }
 
             if (_context.Outcome == null) continue;
+            _repository.Add(DateTime.Now, i,_context.Rover.ResourcesCollection.Count, _context.Outcome);
             Console.WriteLine($"Simulation ended with an outcome of {_context.Outcome.ToString()}");
             return;
         }

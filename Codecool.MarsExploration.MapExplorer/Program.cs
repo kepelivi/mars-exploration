@@ -1,5 +1,6 @@
 ﻿using Codecool.MarsExploration.MapExplorer.Exploration.Service;
 using Codecool.MarsExploration.MapExplorer.Logger;
+using Codecool.MarsExploration.MapExplorer.Repository;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 
 namespace Codecool.MarsExploration.MapExplorer;
@@ -10,6 +11,8 @@ class Program
 
     public static void Main(string[] args)
     {
+        
+        
         var mapFile = $@"{WorkDir}/Resources/exploration-0.map";
         var landingSpot = new Coordinate(0, 0);
         var resources = new List<string> { "*", "%" };
@@ -29,5 +32,6 @@ class Program
         };
         
         simulation.RunSimulation(steps);
+        
     }
 }
