@@ -8,7 +8,7 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
         public string Id { get; }
         public Coordinate Position { get; set; }
         public int Sight { get; }
-        public Dictionary<Coordinate, (string, Coordinate)> ResourcesCollection { get; set; }
+        public Dictionary<Coordinate, (string resource, Coordinate roverPosition)> ResourcesCollection { get; set; }
 
         public List<Coordinate> PastMovements { get; set; }
 
