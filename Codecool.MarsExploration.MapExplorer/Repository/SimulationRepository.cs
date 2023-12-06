@@ -10,6 +10,7 @@ public class SimulationRepository : ISimulationRepository
 
     public SimulationRepository()
     {
+        CreateDbIfNotExist();
         CreateTable();
     }
 
@@ -23,7 +24,6 @@ public class SimulationRepository : ISimulationRepository
 
     private static SqliteConnection GetPhysicalDbConnection()
     {
-        CreateDbIfNotExist();
         var dbConnection = new SqliteConnection($"Data Source ={FilePath};Mode=ReadWrite");
         dbConnection.Open();
         return dbConnection;
