@@ -1,6 +1,4 @@
-﻿using System.Xml.Schema;
-using Codecool.MarsExploration.MapGenerator.Calculators.Model;
-using Codecool.MarsExploration.MapGenerator.MapElements.Model;
+﻿using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.MarsRover
 {

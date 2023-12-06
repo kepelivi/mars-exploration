@@ -1,6 +1,5 @@
 ﻿using Codecool.MarsExploration.MapExplorer.Configuration;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
-using Codecool.MarsExploration.MapGenerator.Configuration.Service;
 using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorerTest;
@@ -13,7 +12,7 @@ public class ConfigurationValidatorTest
     [Test]
     public void ValidatorLandingSpotNotEmptyTest()
     {
-        var testMap = new Map(new string[,] { { "&", "#", "#"},{ "&", "#", "#"},{ "&", "#", "#"} }, true) ;
+        var testMap = new Map(new [,] { { "&", "#", "#"},{ "&", "#", "#"},{ "&", "#", "#"} }, true) ;
         var testLandingCoordinate = new Coordinate(2,2);
         var testResources = new List<string>{"&", "#"};
         const int testTimeOut = 10;

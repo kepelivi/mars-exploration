@@ -4,55 +4,51 @@ using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
-using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Exploration.Service;
 
 public class ExplorationSimulation
 {
     private readonly Random _random = new ();
-    private SimulationContext _context;
-    private Coordinate _landingCoordinate;
-    private Map _map;
-    private MarsRover.MarsRover _rover;
-    private ILogger _logger;
+    private readonly SimulationContext _context;
+    private readonly ILogger _logger;
 
     public ExplorationSimulation(Configuration.Configuration config, ILogger logger, string roverId, int roverSight)
     {
         IConfigurationValidator configurationValidator = new ConfigurationValidator();
         IMapLoader mapLoader = new MapLoader.MapLoader();
         _logger = logger;
-        _map = mapLoader.Load(config.MapFile);
 
-        if (configurationValidator.Validate(_map, config))
+        if (configurationValidator.Validate(mapLoader.Load(config.MapFile), config))
         {
-            _landingCoordinate = config.LandingCoordinate;
+           var roverPlacer = new RoverPlacer();
+            _context = new SimulationContext(
+                config.MaxSteps, 
+                roverPlacer.PlaceRover(roverId, mapLoader.Load(config.MapFile), config.LandingCoordinate, roverSight), 
+                config.LandingCoordinate,
+                mapLoader.Load(config.MapFile), 
+                config.Resources
+                ); 
         }
         else
         {
             _logger.Log("ERROR: invalid configuration!");
             throw new Exception("Invalid configuration!");
         }
-        
-        var roverPlacer = new RoverPlacer();
-        _rover = roverPlacer.PlaceRover(roverId, _map, _landingCoordinate, roverSight);
-        _context = new SimulationContext(config.MaxSteps, _rover, _landingCoordinate, _map, config.Resources);
     }
     
     public void RunSimulation(List<Action> simulationSteps)
     {
-        for (int i = 1; i <= _context.MaxNumOfSteps; i++)
+        for (var i = 1; i <= _context.MaxNumOfSteps; i++)
         {
             foreach (var action in simulationSteps)
             {
                 action();
             }
 
-            if (_context.Outcome != null)
-            {
-                Console.WriteLine($"Simulation ended with an outcome of {_context.Outcome.ToString()}");
-                return;
-            }
+            if (_context.Outcome == null) continue;
+            Console.WriteLine($"Simulation ended with an outcome of {_context.Outcome.ToString()}");
+            return;
         }
     }
 
@@ -60,75 +56,71 @@ public class ExplorationSimulation
     {
         var coordinateCalculator = new CoordinateCalculator();
         var emptyCoordinates = coordinateCalculator
-            .GetAdjacentCoordinates(_rover.Position, _map.Dimension)
-            .Where(coordinate => _map.IsEmpty(coordinate))
+            .GetAdjacentCoordinates(_context.Rover.Position, _context.Map.Dimension)
+            .Where(coordinate => _context.Map.IsEmpty(coordinate))
             .ToList();
 
         var newPosition = emptyCoordinates[_random.Next(0, emptyCoordinates.Count)];
 
-        _rover.PastMovements.Add(_rover.Position);
-        _rover.Position = new Coordinate(newPosition.X, newPosition.Y);
+        _context.Rover.PastMovements.Add(_context.Rover.Position);
+        _context.Rover.Position = new Coordinate(newPosition.X, newPosition.Y);
         _context.NumberOfSteps++;
     }
 
     public void SmartMove()
     {
         var coordinateCalculator = new CoordinateCalculator();
-        var emptyCoordinates = coordinateCalculator.GetAdjacentCoordinates(_rover.Position, _map.Dimension).Where(c => _map.IsEmpty(c)).ToList();
+        var emptyCoordinates = coordinateCalculator.GetAdjacentCoordinates(_context.Rover.Position, _context.Map.Dimension).Where(c => _context.Map.IsEmpty(c)).ToList();
 
-        var availableCoordinates = emptyCoordinates.Where(c => !_rover.PastMovements.Contains(c)).ToList();
+        var availableCoordinates = emptyCoordinates.Where(c => !_context.Rover.PastMovements.Contains(c)).ToList();
 
-        _rover.PastMovements.Add(_rover.Position);
-        var resourceFoundInLastStep = _rover.Position;
-        var coord = _rover.Position;
-        if (_rover.ResourcesCollection.Count != 0)
+        _context.Rover.PastMovements.Add(_context.Rover.Position);
+        var resourceFoundInLastStep = _context.Rover.Position;
+        var coord = _context.Rover.Position;
+        if (_context.Rover.ResourcesCollection.Count != 0)
         {
-            resourceFoundInLastStep = _rover.ResourcesCollection.Where(resource =>
-            resource.Value.Item2.X == _rover.PastMovements[_rover.PastMovements.Count - 1].X && resource.Value.Item2.Y == _rover.PastMovements[_rover.PastMovements.Count - 1].Y).FirstOrDefault().Key;
+            resourceFoundInLastStep = _context.Rover.ResourcesCollection.FirstOrDefault(resource => resource.Value.Item2.X == _context.Rover.PastMovements[^1].X && resource.Value.Item2.Y == _context.Rover.PastMovements[^1].Y).Key;
 
             if (resourceFoundInLastStep != null)
             {
-            coord = availableCoordinates.Aggregate(_rover.Position, (shortest, next) =>
-                Math.Abs(next.X - resourceFoundInLastStep.X) + Math.Abs(next.Y - resourceFoundInLastStep.Y) <
-                Math.Abs(shortest.X - resourceFoundInLastStep.X) + Math.Abs(shortest.Y - resourceFoundInLastStep.Y) ? next : shortest
+                coord = availableCoordinates.Aggregate(_context.Rover.Position, (shortest, next) =>
+                    Math.Abs(next.X - resourceFoundInLastStep.X) + Math.Abs(next.Y - resourceFoundInLastStep.Y) <
+                    Math.Abs(shortest.X - resourceFoundInLastStep.X) + Math.Abs(shortest.Y - resourceFoundInLastStep.Y) ? next : shortest
                 );
             }
         }
         
         if (availableCoordinates.Count == 0)
         {
-            _rover.Position = emptyCoordinates[_random.Next(0, emptyCoordinates.Count)];
+            _context.Rover.Position = emptyCoordinates[_random.Next(0, emptyCoordinates.Count)];
         }
-        else if (_rover.Position == coord)
+        else if (_context.Rover.Position == coord)
         {
-            _rover.Position = availableCoordinates[_random.Next(0, availableCoordinates.Count)];
+            _context.Rover.Position = availableCoordinates[_random.Next(0, availableCoordinates.Count)];
         }
         else
         {
-            _rover.Position = coord;
+            _context.Rover.Position = coord;
         }
         _context.NumberOfSteps++;
     }
 
     private void MoveBack()
     {
-        _rover.Position = _landingCoordinate;
+        _context.Rover.Position = _context.LandingCoordinate;
     }
 
     public void Scan()
     {
-        for (int i = -_rover.Sight; i <= _rover.Sight; i++)
+        for (var i = -_context.Rover.Sight; i <= _context.Rover.Sight; i++)
         {
-            for (int j = -_rover.Sight; j <= _rover.Sight; j++)
+            for (var j = -_context.Rover.Sight; j <= _context.Rover.Sight; j++)
             {
-                Coordinate coordToCheck = new Coordinate(Math.Min(Math.Max(_rover.Position.X + i, 0), _map.Dimension-1), Math.Min(Math.Max(_rover.Position.Y + j, 0), _map.Dimension-1));
-                if (_context.ResourcesToMonitor.Contains(_map.GetByCoordinate(coordToCheck)))
-                {
-                    if (!_rover.ResourcesCollection.Keys.Contains(coordToCheck))
-                    {
-                        _rover.ResourcesCollection.Add(coordToCheck, (_map.GetByCoordinate(coordToCheck), _rover.Position));
-                    }
-                }
+                var coordToCheck = new Coordinate(Math.Min(Math.Max(_context.Rover.Position.X + i, 0), _context.Map.Dimension-1), Math.Min(Math.Max(_context.Rover.Position.Y + j, 0), _context.Map.Dimension-1));
+                if (!_context.ResourcesToMonitor.Contains(_context.Map.GetByCoordinate(coordToCheck))) continue;
+                if (_context.Rover.ResourcesCollection.ContainsKey(coordToCheck)) continue;
+                Console.WriteLine($"{_context.Map.GetByCoordinate(coordToCheck)} resources found at {coordToCheck}");
+                _context.Rover.ResourcesCollection.Add(coordToCheck, (_context.Map.GetByCoordinate(coordToCheck), _context.Rover.Position)!);
             }
         }
     }
@@ -144,13 +136,8 @@ public class ExplorationSimulation
 
     public void Log()
     {
-        if (_context.Outcome == null)
-        {
-            _logger.Log($"Rover {_rover.Id} is at coordinates {_rover.Position.X},{_rover.Position.Y}. It has completed {_context.NumberOfSteps} out of {_context.MaxNumOfSteps}. The collection includes {_rover.ResourcesCollection.Count} resources");
-        }
-        else
-        {
-            _logger.Log($"Outcome {_context.Outcome.ToString()} reached!");
-        }
+        _logger.Log(_context.Outcome == null
+            ? $"Rover {_context.Rover.Id} is at coordinates {_context.Rover.Position.X},{_context.Rover.Position.Y}. It has completed {_context.NumberOfSteps} out of {_context.MaxNumOfSteps}. The collection includes {_context.Rover.ResourcesCollection.Count} resources"
+            : $"Outcome {_context.Outcome.ToString()} reached!");
     }
 }

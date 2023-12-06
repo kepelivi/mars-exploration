@@ -33,8 +33,7 @@ public class ConfigurationValidator : IConfigurationValidator
         return map.Representation[landingCoordinate.X, landingCoordinate.Y] == " "  && isThereEmptySpaceAdjacentToLandingSpot;
 
     }
-
-    // this file itself might not exist before calling MapLoader.Load() - this creates the file if it does not exist.
+    
     private static bool IsMapFileValid(string filePath)
     {
         return File.Exists(filePath);

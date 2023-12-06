@@ -14,7 +14,7 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
             return rover;
         }
 
-        private Coordinate AvailableCoordinate(Map map, Coordinate shipCoords)
+        private static Coordinate AvailableCoordinate(Map map, Coordinate shipCoords)
         {
             var coordinateCalculator = new CoordinateCalculator();
 

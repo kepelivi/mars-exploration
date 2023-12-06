@@ -12,8 +12,8 @@ public class MapLoaderTest
     public void Setup()
     {
         _mapLoader = new MapLoader();
-        string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
-        _testMapString = $"{WorkDir}" + "/Resources/exploration-0.map";
+        var workDir = AppDomain.CurrentDomain.BaseDirectory;
+        _testMapString = $"{workDir}" + "/Resources/exploration-0.map";
     }
 
     [Test]
@@ -25,11 +25,11 @@ public class MapLoaderTest
     [Test]
     public void LoadGeneratesSameMap()
     {
-        Map newMap = _mapLoader.Load(_testMapString);
-        string newMapString = newMap.ToString();
+        var newMap = _mapLoader.Load(_testMapString);
+        var newMapString = newMap.ToString();
 
         using var sr = new StreamReader(_testMapString);
-        string originalMapString = sr.ReadToEnd();
+        var originalMapString = sr.ReadToEnd();
         
         Assert.That(newMapString, Is.EquivalentTo(originalMapString));
     }
