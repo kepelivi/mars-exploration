@@ -18,7 +18,7 @@ public class SimulationRepository : ISimulationRepository
     {
         if (!File.Exists(FilePath))
         {
-            File.Create(FilePath);
+            using var fileStream = File.Create(FilePath);
         }
     }
 
