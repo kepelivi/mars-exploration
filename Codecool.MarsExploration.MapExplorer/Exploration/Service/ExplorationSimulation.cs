@@ -3,6 +3,7 @@ using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover;
 using Codecool.MarsExploration.MapExplorer.Repository;
+using Codecool.MarsExploration.MapExplorer.UI;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
 
@@ -51,6 +52,7 @@ public class ExplorationSimulation
             if (_context.Outcome == null) continue;
             _repository.Add(DateTime.Now, i,_context.Rover.ResourcesCollection.Count, _context.Outcome);
             Console.WriteLine($"Simulation ended with an outcome of {_context.Outcome.ToString()}");
+            SmartMoveBack();
             return;
         }
     }
@@ -116,6 +118,21 @@ public class ExplorationSimulation
     private void MoveBack()
     {
         _context.Rover.Position = _context.LandingCoordinate;
+    }
+
+    private void SmartMoveBack()
+    {
+        var symbolsToConsoleColors = new Dictionary<string, ConsoleColor>()
+        {
+            {"#", ConsoleColor.Black},
+            {"&", ConsoleColor.DarkYellow},
+            {"%", ConsoleColor.Red},
+            {"*", ConsoleColor.Blue}
+        };
+        var ui = new MarsExplorationUI(symbolsToConsoleColors);
+        ui.DisplayMap(_context.Map, _context.Rover.Position, _context.LandingCoordinate);
+        var shortestPath = new ShortestPathFinder(_context.Map).FindShortestPath(_context.Rover.Position, _context.LandingCoordinate);
+        ui.DisplayMap(_context.Map, _context.Rover.Position, _context.LandingCoordinate, shortestPath);
     }
 
     public void Scan()
